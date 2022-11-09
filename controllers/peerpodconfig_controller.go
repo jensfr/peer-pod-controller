@@ -129,6 +129,7 @@ func (r *PeerPodConfigReconciler) peerpodCloudProviderIsValid() error {
 	} else {
 		ppCloudProviderName = peerpodscm.Data["CLOUD_PROVIDER"]
 		if ppCloudProviderName == "" || !contains(validCloudProviderNames, ppCloudProviderName) {
+			r.Log.Info("CLOUD_PROVIDER=", "ppCloudProviderName", ppCloudProviderName)
 			return errors.New("set CLOUD_PROVIDER name to one supported in cloud-api-provider, found CLOUD_PROVIDER=" + ppCloudProviderName)
 		}
 	}
