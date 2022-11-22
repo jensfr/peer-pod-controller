@@ -187,6 +187,7 @@ func (r *PeerPodConfigReconciler) createCcaDaemonset(cloudProviderName string) *
 				Spec: corev1.PodSpec{
 					ServiceAccountName: "default",
 					NodeSelector:       nodeSelector,
+					HostNetwork:        true,
 					Containers: []corev1.Container{
 						{
 							Name: "cc-runtime-install-pod",
