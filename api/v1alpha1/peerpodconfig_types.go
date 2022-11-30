@@ -33,6 +33,9 @@ type PeerPodConfigSpec struct {
 
 	// CloudSecretName is the name of the secret that holds the credentials for the cloud provider
 	CloudSecretName string `json:"cloudSecretName"`
+
+	// ConfigMapName is the name of the configmap that holds the config for the cloud provider
+	CloudConfigName string `json:"cloudConfigName"`
 }
 
 // PeerPodConfigStatus defines the observed state of PeerPodConfig
