@@ -20,6 +20,10 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"path"
+	"strconv"
+	"strings"
+
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -31,13 +35,10 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	k8sclient "k8s.io/client-go/kubernetes"
 	restclient "k8s.io/client-go/rest"
-	"path"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-	"strconv"
-	"strings"
 
 	ccv1alpha1 "github.com/jensfr/peer-pod-controller/api/v1alpha1"
 )
@@ -200,17 +201,16 @@ func (r *PeerPodConfigReconciler) createCcaDaemonset(cloudProviderName string) *
 								RunAsUser:  &runAsUser,
 							},
 							Command: []string{"/usr/local/bin/entrypoint.sh"},
-							Env: []corev1.EnvVar{
-								{
-									Name:  "PAUSE_IMAGE",
-									Value: "quay.io/bpradipt/okd-pause",
-								},
-							},
 							EnvFrom: []corev1.EnvFromSource{
 								{
 									SecretRef: &corev1.SecretEnvSource{
 										LocalObjectReference: corev1.LocalObjectReference{
 											Name: r.peerPodConfig.Spec.CloudSecretName,
+										},
+									},
+									ConfigMapRef: &corev1.ConfigMapEnvSource{
+										LocalObjectReference: corev1.LocalObjectReference{
+											Name: r.peerPodConfig.Spec.CloudConfigMapName,
 										},
 									},
 								},
