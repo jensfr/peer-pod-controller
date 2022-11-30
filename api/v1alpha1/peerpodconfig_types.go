@@ -33,6 +33,10 @@ type PeerPodConfigSpec struct {
 
 	// CloudSecretName is the name of the secret that holds the credentials for the cloud provider
 	CloudSecretName string `json:"cloudSecretName"`
+
+	// NodeSelector selects the nodes to which the cca pods, the RuntimeClass and the MachineConfigs we use
+	// to deploy the full peer pod solution.
+	NodeSelector *metav1.LabelSelector `json:"nodeSelector"`
 }
 
 // PeerPodConfigStatus defines the observed state of PeerPodConfig
