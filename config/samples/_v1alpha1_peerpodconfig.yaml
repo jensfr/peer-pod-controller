@@ -5,3 +5,6 @@ metadata:
 spec:
   cloudSecretName: "peer-pods-secret"
   limit: "20"
+  nodeSelector:
+    matchLabels:
+       custom-kata1: test

@@ -31,6 +31,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 	k8sclient "k8s.io/client-go/kubernetes"
 	restclient "k8s.io/client-go/rest"
+	"os"
 	"path"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -58,6 +59,8 @@ var validCloudProviderNames = []string{"aws", "libvirt", "ibmcloud", "vsphere", 
 //+kubebuilder:rbac:groups=confidentialcontainers.org,resources=peerpodconfigs/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=confidentialcontainers.org,resources=peerpodconfigs/finalizers,verbs=update
 //+kubebuilder:rbac:groups="",resources=nodes/status,verbs=patch
+//+kubebuilder:rbac:groups="",resources=configmaps,verbs=create;get;update;list;watch
+//+kubebuilder:rbac:groups="",resources=secrets,verbs=create;get;update;list;watch
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -120,7 +123,7 @@ func (r *PeerPodConfigReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 // Check if "peer-pods-secret" exists and has valid cloud provider name set in CLOUD_PROVIDER
 func (r *PeerPodConfigReconciler) peerpodCloudProviderIsValid() error {
 	peerpodscm := corev1.ConfigMap{}
-	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: "peer-pods-cm", Namespace: "openshift-sandboxed-containers-operator"}, &peerpodscm)
+	err := r.Client.Get(context.TODO(), types.NamespacedName{Name: "peer-pods-cm", Namespace: os.Getenv("PEERPODS_NAMESPACE")}, &peerpodscm)
 	if err != nil && k8serrors.IsNotFound(err) {
 		return err
 	} else if err != nil {
